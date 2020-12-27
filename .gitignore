@@ -1,0 +1,12 @@
+# Data
+data
+archive.zip
+
+# Python
+__pycache__
+.ipynb_checkpoints
+
+
+#MISC
+.*DS_Store
+logs
