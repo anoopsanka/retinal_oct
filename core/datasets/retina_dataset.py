@@ -1,45 +1,82 @@
-from typing import Tuple
-import tensorflow as tf
-from core.datasets.dataset import Dataset
+"""Retina dataset."""
 
-TRAIN_DATA_DIRNAME = Dataset.data_dirname() / "train"
-VAL_DATA_DIRNAME = Dataset.data_dirname() / "val"
-TEST_DATA_DIRNAME = Dataset.data_dirname() / "test"
+import re
+import tensorflow_datasets as tfds
 
-class RetinaDataset(Dataset):
-    def __init__(self, batch_size:int = 32, target_size: Tuple[int, int] = (224, 224)):
-        self.train = self.validation = self.test = None
+_DESCRIPTION = """\
+Retinal OCT image dataset reflecting Drusen, DME, CNV and Normal 
+"""
 
-        self.input_shape = (224, 224, 3)
-        self.num_classes = 4
-        self.output_shape = (self.num_classes,)
+_CITATION = """\
+title = {Retinal OCT image data}
+author = {paultimothymooney}
+publisher = {Kaggle}
+url = {https://www.kaggle.com/paultimothymooney/kermany2018 }
+"""
+_TRAIN_URL = "https://storage.googleapis.com/retinal_oct_archive/retinal_oct_train.zip"
+_TEST_URL = "https://storage.googleapis.com/retinal_oct_archive/retinal_oct_test.zip"
+_LABELS = ["NORMAL", "DRUSEN", "DME", "CNV"]
 
-        self.train_datagen_kwargs = dict(rescale=1./255)
-        self.test_datagen_kwargs = dict(rescale=1./255)
+_NAME_RE = re.compile(r"^([\w]*[\\/])(NORMAL|DRUSEN|DME|CNV)(?:/|\\)[\w-]*\.jpeg$")
 
-        self.dataflow_kwargs = dict(target_size=target_size, batch_size=batch_size, seed=42, class_mode='categorical')
+class RetinaDataset(tfds.core.GeneratorBasedBuilder):
+  """DatasetBuilder for retinaoct dataset."""
 
-    def load_or_generate_data(self):
-            train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(**self.train_datagen_kwargs)
-            self.train = train_datagen.flow_from_directory(TRAIN_DATA_DIRNAME, shuffle=True, **self.dataflow_kwargs)            
+  VERSION = tfds.core.Version('1.0.0')
+  RELEASE_NOTES = {
+      '1.0.0': 'Initial release.',
+  }
 
-    
-            test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(**self.test_datagen_kwargs)
-            self.validation = test_datagen.flow_from_directory(VAL_DATA_DIRNAME, shuffle=False, **self.dataflow_kwargs)
-            self.test = test_datagen.flow_from_directory(TEST_DATA_DIRNAME, shuffle=False, **self.dataflow_kwargs)
+  def _info(self) -> tfds.core.DatasetInfo:
+    """Returns the dataset metadata."""
+    # TODO(my_dataset): Specifies the tfds.core.DatasetInfo object
+    return tfds.core.DatasetInfo(
+        builder=self,
+        description=_DESCRIPTION,
+        features=tfds.features.FeaturesDict({
+            "image": tfds.features.Image(),
+            "label": tfds.features.ClassLabel(names=_LABELS)
+        }),
+        supervised_keys=("image", "label"),
+        homepage='https://www.kaggle.com/paultimothymooney/kermany2018',
+        citation=_CITATION,
+    )
 
-    def __repr__(self):
-        return (
-            'Retina Dataset\n'
-            f'Num classes: {self.num_classes}\n'
-            f'Input Shape: {self.input_shape}\n'
-        )
+  def _split_generators(self, dl_manager):
+    train_path, test_path = dl_manager.download([_TRAIN_URL, _TEST_URL])
 
+    return [
+        tfds.core.SplitGenerator(
+            name=tfds.Split.TRAIN,
+            gen_kwargs={
+                "archive": dl_manager.iter_archive(train_path)
+            }),
+        tfds.core.SplitGenerator(
+            name=tfds.Split.TEST,
+            gen_kwargs={
+                "archive": dl_manager.iter_archive(test_path)
+            }),
+  
+    ]
 
-def main():
-    dataset = RetinaDataset(batch_size=32)
-    dataset.load_or_generate_data()
+  def _generate_examples(self, archive):
+    """Generate horses or humans images and labels given the directory path.
 
+    Args:
+      archive: object that iterates over the zip.
 
-if __name__ == '__main__':
-    main()
+    Yields:
+      The image path and its corresponding label.
+    """
+
+    for fname, fobj in archive:
+      res = _NAME_RE.match(fname)
+      if not res:  # if anything other than .png; skip
+        continue
+      label = res.group(2)
+      record = {
+          "image": fobj,
+          "label": label,
+      }
+      yield fname, record
+
