@@ -9,3 +9,4 @@ tensorflow
 toml
 tqdm
 wrapt
+tensorflow-datasets
