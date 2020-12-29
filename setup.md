@@ -15,6 +15,8 @@ git pull origin main
 
 Run `conda env create -f environment.yml' to create an environment called `retina_env`.
 
+Also, run ```export PYTHONPATH=.``` before executing any commands later on, or you will get errors like `ModuleNotFoundError: No module named ...`.
+
 Install Python libraries using `pip-sync`, which will let us do three nice things:
 
 1. Separate out dev from production dependencies (`requirements-dev.in` vs `requirements.in`).
