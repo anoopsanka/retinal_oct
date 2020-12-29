@@ -1,0 +1,22 @@
+bandit
+black
+gpustat
+gradescope-utils
+grequests # admin
+itermplot
+jupyter
+notebook
+matplotlib
+mypy
+nltk
+pycodestyle
+pydocstyle
+pylint
+pytest
+pyyaml
+redlock-py
+tornado
+safety
+scipy
+pillow
+wandb

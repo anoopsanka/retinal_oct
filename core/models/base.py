@@ -24,7 +24,7 @@ class Model:
     @property
     def weights_filename(self) -> str:
         WEIGHTS_DIRNAME.mkdir(parents=True, exist_ok=True)
-        return stf(WEIGHTS_DIRNAME / f"{self.name}_weights.h5")
+        return str(WEIGHTS_DIRNAME / f"{self.name}_weights.h5")
 
     @property
     def image_shape(self):

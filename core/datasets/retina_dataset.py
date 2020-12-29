@@ -17,7 +17,7 @@ class RetinaDataset(Dataset):
         self.train_datagen_kwargs = dict(rescale=1./255)
         self.test_datagen_kwargs = dict(rescale=1./255)
 
-        self.dataflow_kwargs = dict(target_size=target_size, batch_size=batch_size, class_mode='categorical')
+        self.dataflow_kwargs = dict(target_size=target_size, batch_size=batch_size, seed=42, class_mode='categorical')
 
     def load_or_generate_data(self):
             train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(**self.train_datagen_kwargs)
