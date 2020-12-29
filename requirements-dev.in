@@ -1,11 +1,11 @@
+-c requirements.txt
 bandit
 black
 gpustat
 gradescope-utils
 grequests # admin
 itermplot
-jupyter
-notebook
+jupyterlab
 matplotlib
 mypy
 nltk
