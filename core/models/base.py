@@ -3,6 +3,7 @@ from typing import Callable, Dict
 
 from tensorflow.keras.models import Model as KerasModel
 from tensorflow.keras.optimizers import RMSprop
+import tensorflow_datasets as tfds
 
 WEIGHTS_DIRNAME = Path(__file__).parents[1].resolve() / "weights"
 
@@ -19,7 +20,7 @@ class Model:
 
         self.data = dataset_cls(**dataset_args)
 
-        self.network = network_fn(self.data.input_shape, self.data.output_shape)
+        self.network = network_fn(input_shape=self.data.input_shape, output_shape=self.data.num_classes)
 
     @property
     def weights_filename(self) -> str:
@@ -30,12 +31,13 @@ class Model:
     def image_shape(self):
         return self.data.input_shape
 
-    def fit(self, dataset, epochs: int = 10, verbose: int = 1, callbacks: list = []):
-
+    def fit(self, dataset, batch_size: int =32, epochs: int = 10, verbose: int = 1, callbacks: list = []):
+        dataset.train = dataset.train.batch(batch_size)
+        dataset.validation = dataset.validation.batch(batch_size)
+        dataset.test = dataset.test.batch(batch_size)
         self.network.compile(loss=self.loss(), optimizer=self.optimizer(), metrics=self.metrics())
+
         fit_kwargs = dict(
-                        steps_per_epoch = dataset.train.samples // dataset.train.batch_size,
-                        validation_steps = dataset.validation.samples // dataset.validation.batch_size,
                         epochs = epochs,
                         validation_data = dataset.validation,
                         verbose = verbose,
@@ -43,13 +45,11 @@ class Model:
                     )
         self.network.fit(dataset.train, **fit_kwargs)
 
-    def evaluate(self, data, verbose=2):
+    def evaluate(self, data, verbose=1):
         self.network.evaluate(data, verbose=verbose)
 
-
-
     def loss(self):
-        return 'categorical_crossentropy'
+        return 'sparse_categorical_crossentropy'
 
     def optimizer(self):
         return RMSprop()

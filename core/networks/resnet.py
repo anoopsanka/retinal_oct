@@ -4,7 +4,6 @@ import tensorflow as tf
 
 def resnet(input_shape: Tuple[int, ...], output_shape: Tuple[int, ...]) -> tf.keras.models.Model:
     num_classes = output_shape[0]
-
     model = tf.keras.models.Sequential()
     conv_base = tf.keras.applications.ResNet50V2(weights='imagenet', include_top=False, input_shape=input_shape, pooling='avg')
     model.add(conv_base)

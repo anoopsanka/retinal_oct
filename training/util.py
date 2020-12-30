@@ -8,7 +8,7 @@ from core.models.base import Model
 
 EARLY_STOPPING = True
 
-def train_model(model: Model, dataset: Dataset, epochs: int) -> Model:
+def train_model(model: Model, dataset: Dataset, epochs: int, batch_size: int) -> Model:
     callbacks = []
 
     if EARLY_STOPPING:
@@ -18,7 +18,7 @@ def train_model(model: Model, dataset: Dataset, epochs: int) -> Model:
     model.network.summary()
 
     t= time()
-    _history = model.fit(dataset=dataset, epochs=epochs, callbacks=callbacks)
+    _history = model.fit(dataset=dataset, epochs=epochs, batch_size=batch_size, callbacks=callbacks)
     print ('Training took {:2f} s'.format(time() - t))
 
     return model

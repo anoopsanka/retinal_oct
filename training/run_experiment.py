@@ -34,10 +34,10 @@ def run_experiment(experiment_config: Dict, save_weights: bool):
 
     datasets_module = importlib.import_module("core.datasets")
     dataset_class_ = getattr(datasets_module, experiment_config["dataset"])
-    batch_size=experiment_config["train_args"]["batch_size"]
-    dataset = dataset_class_(batch_size)
+    dataset = dataset_class_()
     dataset.load_or_generate_data()
     print (dataset)
+
 
     models_module = importlib.import_module("core.models")
     model_class_ = getattr(models_module, experiment_config["model"])
@@ -55,6 +55,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool):
         model,
         dataset,
         epochs=experiment_config["train_args"]["epochs"],
+        batch_size=experiment_config["train_args"]["batch_size"]
     )
 
     score = model.evaluate(dataset.test)
@@ -62,6 +63,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool):
     
     if save_weights:
         model.save_weights()
+
 
 def _parse_args():
     parser = argparse.ArgumentParser()

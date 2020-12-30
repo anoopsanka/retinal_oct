@@ -1,1 +1,2 @@
 from .retina_dataset import RetinaDataset
+from .retina_dataset_wrapper import RetinaDatasetWrapper
