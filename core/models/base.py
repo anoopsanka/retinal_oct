@@ -34,9 +34,7 @@ class Model:
         return self.data.input_shape
 
     def fit(self, dataset, batch_size: int =32, epochs: int = 10, verbose: int = 1, callbacks: list = []):
-        dataset.train = dataset.train.batch(batch_size)
-        dataset.validation = dataset.validation.batch(batch_size)
-        dataset.test = dataset.test.batch(batch_size)
+        dataset.train, dataset.validation , dataset.test = dataset.prepare(batch_size)
         self.network.compile(loss=self.loss(), optimizer=self.optimizer(), metrics=self.metrics())
 
         fit_kwargs = dict(

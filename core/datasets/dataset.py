@@ -7,5 +7,8 @@ class Dataset:
     def data_dirname(cls):
         return Path(__file__).resolve().parents[2] / "data"
     
-    def load_or_generate_data(self):
+    def load(self):
+        pass
+    
+    def prepare(self):
         pass

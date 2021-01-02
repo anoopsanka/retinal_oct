@@ -60,7 +60,7 @@ class RetinaDataset(tfds.core.GeneratorBasedBuilder):
     ]
 
   def _generate_examples(self, archive):
-    """Generate horses or humans images and labels given the directory path.
+    """Generate images and labels given the directory path.
 
     Args:
       archive: object that iterates over the zip.
@@ -71,7 +71,7 @@ class RetinaDataset(tfds.core.GeneratorBasedBuilder):
 
     for fname, fobj in archive:
       res = _NAME_RE.match(fname)
-      if not res:  # if anything other than .png; skip
+      if not res:
         continue
       label = res.group(2)
       record = {

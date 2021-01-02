@@ -36,7 +36,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool):
     datasets_module = importlib.import_module("core.datasets")
     dataset_class_ = getattr(datasets_module, experiment_config["dataset"])
     dataset = dataset_class_()
-    dataset.load_or_generate_data()
+    dataset.load()
     print (dataset)
 
 
