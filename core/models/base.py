@@ -1,12 +1,13 @@
 from pathlib import Path
 from typing import Callable, Dict
 
+import tensorflow as tf
 from tensorflow.keras.models import Model as KerasModel
 from tensorflow.keras.optimizers import RMSprop
 import tensorflow_datasets as tfds
 
 WEIGHTS_DIRNAME = Path(__file__).parents[1].resolve() / "weights"
-
+_SEED=42
 
 class Model:
 
@@ -16,6 +17,7 @@ class Model:
         network_fn: Callable[..., KerasModel],
         dataset_args: Dict = {}
     ):
+        tf.random.set_seed(_SEED)
         self.name = f'{self.__class__.__name__}_{dataset_cls.__name__}_{network_fn.__name__}'
 
         self.data = dataset_cls(**dataset_args)
