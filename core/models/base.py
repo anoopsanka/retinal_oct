@@ -46,7 +46,7 @@ class Model:
         self.network.fit(dataset.train, **fit_kwargs)
 
     def evaluate(self, data, verbose=1):
-        self.network.evaluate(data, verbose=verbose)
+        return self.network.evaluate(data, verbose=verbose)
 
     def loss(self):
         return 'sparse_categorical_crossentropy'
