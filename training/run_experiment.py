@@ -59,7 +59,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool):
         batch_size=experiment_config["train_args"]["batch_size"]
     )
 
-    score = model.evaluate(dataset.test)
+    score = model.evaluate(dataset.test, batch_size=experiment_config["train_args"]["batch_size"])
     print(f"Test evaluation: {score}")
     
     if save_weights:

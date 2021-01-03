@@ -10,5 +10,8 @@ class Dataset:
     def load(self):
         pass
     
+    def get_class_weights(self):
+        pass
+
     def prepare(self):
         pass

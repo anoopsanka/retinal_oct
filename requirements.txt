@@ -28,10 +28,11 @@ importlib-metadata==3.3.0  # via markdown
 importlib-resources==4.1.1  # via tensorflow-datasets
 itsdangerous==1.1.0       # via flask
 jinja2==2.11.2            # via flask
+joblib==1.0.0             # via scikit-learn
 keras-preprocessing==1.1.2  # via tensorflow
 markdown==3.3.3           # via tensorboard
 markupsafe==1.1.1         # via jinja2
-numpy==1.18.5             # via -r requirements.in, h5py, keras-preprocessing, opencv-python-headless, opt-einsum, scipy, tensorboard, tensorflow, tensorflow-datasets
+numpy==1.18.5             # via -r requirements.in, h5py, keras-preprocessing, opencv-python-headless, opt-einsum, scikit-learn, scipy, tensorboard, tensorflow, tensorflow-datasets
 oauthlib==3.1.0           # via requests-oauthlib
 opencv-python-headless==4.4.0.46  # via -r requirements.in
 opt-einsum==3.3.0         # via tensorflow
@@ -42,7 +43,8 @@ pyasn1==0.4.8             # via pyasn1-modules, rsa
 requests-oauthlib==1.3.0  # via google-auth-oauthlib
 requests==2.25.1          # via -r requirements.in, requests-oauthlib, tensorboard, tensorflow-datasets
 rsa==4.6                  # via google-auth
-scipy==1.4.1              # via tensorflow
+scikit-learn==0.24.0      # via -r requirements.in
+scipy==1.4.1              # via scikit-learn, tensorflow
 six==1.15.0               # via absl-py, astunparse, google-auth, google-pasta, grpcio, h5py, keras-preprocessing, promise, protobuf, tensorboard, tensorflow, tensorflow-datasets
 tensorboard-plugin-wit==1.7.0  # via tensorboard
 tensorboard==2.4.0        # via tensorflow
@@ -51,6 +53,7 @@ tensorflow-estimator==2.3.0  # via tensorflow
 tensorflow-metadata==0.26.0  # via tensorflow-datasets
 tensorflow==2.3           # via -r requirements.in
 termcolor==1.1.0          # via tensorflow, tensorflow-datasets
+threadpoolctl==2.1.0      # via scikit-learn
 toml==0.10.2              # via -r requirements.in
 tqdm==4.55.0              # via -r requirements.in, tensorflow-datasets
 typing-extensions==3.7.4.3  # via importlib-metadata, tensorflow-datasets

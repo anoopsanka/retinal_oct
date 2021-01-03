@@ -10,3 +10,4 @@ toml
 tqdm
 wrapt
 tensorflow-datasets
+scikit-learn
