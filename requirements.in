@@ -11,3 +11,4 @@ tqdm
 wrapt
 tensorflow-datasets
 scikit-learn
+tensorflow-addons

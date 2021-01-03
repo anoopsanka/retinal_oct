@@ -48,6 +48,7 @@ scipy==1.4.1              # via scikit-learn, tensorflow
 six==1.15.0               # via absl-py, astunparse, google-auth, google-pasta, grpcio, h5py, keras-preprocessing, promise, protobuf, tensorboard, tensorflow, tensorflow-datasets
 tensorboard-plugin-wit==1.7.0  # via tensorboard
 tensorboard==2.4.0        # via tensorflow
+tensorflow-addons==0.12.0  # via -r requirements.in
 tensorflow-datasets==4.1.0  # via -r requirements.in
 tensorflow-estimator==2.3.0  # via tensorflow
 tensorflow-metadata==0.26.0  # via tensorflow-datasets
@@ -56,6 +57,7 @@ termcolor==1.1.0          # via tensorflow, tensorflow-datasets
 threadpoolctl==2.1.0      # via scikit-learn
 toml==0.10.2              # via -r requirements.in
 tqdm==4.55.0              # via -r requirements.in, tensorflow-datasets
+typeguard==2.10.0         # via tensorflow-addons
 typing-extensions==3.7.4.3  # via importlib-metadata, tensorflow-datasets
 urllib3==1.26.2           # via requests
 werkzeug==1.0.1           # via flask, tensorboard
