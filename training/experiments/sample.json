@@ -1,0 +1,25 @@
+{
+    "experiment_group": "Experiments",
+    "experiments": [
+        {
+            "dataset": "RetinaDatasetWrapper", 
+            "model": "RetinaModel", 
+            "network": "resnet", 
+            "train_args": {
+                "batch_size": 32, 
+                "epochs": 10
+            }
+        },
+        {
+            "dataset": "RetinaDatasetWrapper", 
+            "model": "RetinaModel", 
+            "network": "resnetfinetune", 
+            "train_args": {
+                "batch_size": 32, 
+                "epochs": 10, 
+                "lr": 1e-4
+            }
+        }
+    ]
+
+}

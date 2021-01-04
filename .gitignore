@@ -6,6 +6,10 @@ archive.zip
 __pycache__
 .ipynb_checkpoints
 
+# W&B
+wandb-debug.log
+wandb/*
+!wandb/settings
 
 #MISC
 .*DS_Store

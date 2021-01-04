@@ -36,9 +36,9 @@ class Model:
     def image_shape(self):
         return self.data.input_shape
 
-    def fit(self, dataset, batch_size: int = 32, epochs: int = 10, verbose: int = 1, callbacks: list = []):
+    def fit(self, dataset, batch_size: int = 32, epochs: int = 10, lr: float = 1e-3, verbose: int = 1, callbacks: list = []):
         dataset.train, dataset.validation , dataset.test = dataset.prepare()
-        self.network.compile(loss=self.loss(), optimizer=self.optimizer(), metrics=self.metrics())
+        self.network.compile(loss=self.loss(), optimizer=self.optimizer(lr=lr), metrics=self.metrics())
 
         class_weight = dataset.get_class_weights()
 
@@ -57,8 +57,8 @@ class Model:
     def loss(self):
         return 'sparse_categorical_crossentropy'
 
-    def optimizer(self):
-        return Adam(lr=1e-3)
+    def optimizer(self, lr=1e-3):
+        return Adam(lr=lr)
 
     def metrics(self):
         return ['accuracy']

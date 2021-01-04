@@ -2,14 +2,16 @@
 import argparse
 import importlib
 import json
+import os
 from typing import Dict
 from training.util import train_model
+from training.gpu_manager import GPUManager
 import pdb
 import wandb
 
-DEFAULT_TRAIN_ARGS = {"batch_size": 32, "epochs": 10}
+DEFAULT_TRAIN_ARGS = {"batch_size": 32, "epochs": 10, "lr": 1e-3}
 
-def run_experiment(experiment_config: Dict, save_weights: bool, use_wandb: bool = True):
+def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, use_wandb: bool = True):
     """
     Parameters
     -------------
@@ -20,21 +22,25 @@ def run_experiment(experiment_config: Dict, save_weights: bool, use_wandb: bool 
             "network": "resnet",
             "train_args": {
                 "batch_size": 128
-                "epochs": 10
+                "epochs": 10,
+                "lr": 1e-3
             }
         }
     save_weights (bool)
         True => Save weights
+    gpu_ind (int)
+        specifies which gpu to use (or -1 for first available)
     use_wandb (boo)
         sync run to wandb
     """
 
-    print(f"Running experiment with config {experiment_config}")
+    print(f"Running experiment with config {experiment_config} on GPU {gpu_ind}")
 
     experiment_config["train_args"] = {
         **DEFAULT_TRAIN_ARGS,
         **experiment_config.get("train_args", {})
     }
+    experiment_config["gpu_ind"] = gpu_ind
 
     datasets_module = importlib.import_module("core.datasets")
     dataset_class_ = getattr(datasets_module, experiment_config["dataset"])
@@ -63,6 +69,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool, use_wandb: bool 
         dataset,
         epochs=experiment_config["train_args"]["epochs"],
         batch_size=experiment_config["train_args"]["batch_size"],
+        lr = experiment_config["train_args"]["lr"],
         use_wandb=use_wandb
     )
 
@@ -78,6 +85,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool, use_wandb: bool 
 
 def _parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--gpu", type=int, default=0, help="Provide index of GPU to use.")
     parser.add_argument(
         "--save",
         default=False,
@@ -99,8 +107,12 @@ def _parse_args():
 def main():
     args = _parse_args()
 
+    if args.gpu < 0:
+        gpu_manager = GPUManager()
+        args.gpu = gpu_manager.get_free_gpu()  # Blocks until one is available
     experiment_config = json.loads(args.experiment_config)
-    run_experiment(experiment_config, args.save, use_wandb=not args.nowandb)
+    os.environ["CUDA_VISIBLE_DEVICES"] = f"{args.gpu}"
+    run_experiment(experiment_config, args.save, args.gpu, use_wandb=not args.nowandb)
 
 if __name__ == "__main__":
     main()
