@@ -1,0 +1,18 @@
+program: ./training/run_sweep.py
+method: bayes
+metric:
+  name: val_loss
+  goal: minimize
+parameters:
+  dataset:
+    value: RetinaDatasetWrapper
+  model:
+    value: RetinaModel
+  network:
+    value: resnet
+  train_args.batch_size:
+    values: [16, 128]
+  train_args.epochs:
+    values: [5, 64]
+  train_args.lr:
+    values: [5e-05, 0.002]
