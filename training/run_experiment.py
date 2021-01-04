@@ -4,11 +4,12 @@ import importlib
 import json
 from typing import Dict
 from training.util import train_model
-import pdb;
+import pdb
+import wandb
 
 DEFAULT_TRAIN_ARGS = {"batch_size": 32, "epochs": 10}
 
-def run_experiment(experiment_config: Dict, save_weights: bool):
+def run_experiment(experiment_config: Dict, save_weights: bool, use_wandb: bool = True):
     """
     Parameters
     -------------
@@ -24,6 +25,8 @@ def run_experiment(experiment_config: Dict, save_weights: bool):
         }
     save_weights (bool)
         True => Save weights
+    use_wandb (boo)
+        sync run to wandb
     """
 
     print(f"Running experiment with config {experiment_config}")
@@ -52,15 +55,22 @@ def run_experiment(experiment_config: Dict, save_weights: bool):
     print (model)
 
 
+    if use_wandb:
+        wandb.init(config=experiment_config)
+
     train_model(
         model,
         dataset,
         epochs=experiment_config["train_args"]["epochs"],
-        batch_size=experiment_config["train_args"]["batch_size"]
+        batch_size=experiment_config["train_args"]["batch_size"],
+        use_wandb=use_wandb
     )
 
     score = model.evaluate(dataset.test, batch_size=experiment_config["train_args"]["batch_size"])
     print(f"Test evaluation: {score}")
+
+    if use_wandb:
+        wandb.log({"test_metric": score})
     
     if save_weights:
         model.save_weights()
@@ -80,6 +90,9 @@ def _parse_args():
         type=str,
         help='Experiment JSON (\'{"dataset": "RetinaDataset", "model": "RetinaModel", "network": "resnet"}\'',
     )
+    parser.add_argument(
+        "--nowandb", default=False, action="store_true", help="if true, do not use wandb"
+    )
     args = parser.parse_args()
     return args
 
@@ -87,7 +100,7 @@ def main():
     args = _parse_args()
 
     experiment_config = json.loads(args.experiment_config)
-    run_experiment(experiment_config, args.save)
+    run_experiment(experiment_config, args.save, use_wandb=not args.nowandb)
 
 if __name__ == "__main__":
     main()
