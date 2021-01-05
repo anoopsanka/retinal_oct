@@ -10,7 +10,7 @@ from wandb.keras import WandbCallback
 
 EARLY_STOPPING = True
 
-def train_model(model: Model, dataset: Dataset, epochs: int, batch_size: int, lr: float, use_wandb: bool = False) -> Model:
+def train_model(model: Model, dataset: Dataset, epochs: int, batch_size: int, lr: float, loss: str, optimizer:str, use_wandb: bool = False) -> Model:
     callbacks = []
 
     if EARLY_STOPPING:
@@ -24,7 +24,7 @@ def train_model(model: Model, dataset: Dataset, epochs: int, batch_size: int, lr
     model.network.summary()
 
     t= time()
-    _history = model.fit(dataset=dataset, epochs=epochs, batch_size=batch_size, lr=lr, callbacks=callbacks)
+    _history = model.fit(dataset=dataset, epochs=epochs, batch_size=batch_size, lr=lr, loss=loss, optimizer=optimizer, callbacks=callbacks)
     print ('Training took {:2f} s'.format(time() - t))
 
     return model

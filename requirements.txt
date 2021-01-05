@@ -15,6 +15,7 @@ click==7.1.2              # via flask
 dill==0.3.3               # via tensorflow-datasets
 editdistance==0.5.3       # via -r requirements.in
 flask==1.1.2              # via -r requirements.in
+focal-loss==0.0.6         # via -r requirements.in
 future==0.18.2            # via tensorflow-datasets
 gast==0.3.3               # via tensorflow
 google-auth-oauthlib==0.4.2  # via tensorboard
@@ -52,7 +53,7 @@ tensorflow-addons==0.12.0  # via -r requirements.in
 tensorflow-datasets==4.1.0  # via -r requirements.in
 tensorflow-estimator==2.3.0  # via tensorflow
 tensorflow-metadata==0.26.0  # via tensorflow-datasets
-tensorflow==2.3           # via -r requirements.in
+tensorflow==2.3           # via -r requirements.in, focal-loss
 termcolor==1.1.0          # via tensorflow, tensorflow-datasets
 threadpoolctl==2.1.0      # via scikit-learn
 toml==0.10.2              # via -r requirements.in

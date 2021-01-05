@@ -12,7 +12,7 @@ DEFAULT_CONFIG = {
     "dataset": "RetinaDatasetWrapper",
     "model": "RetinaModel",
     "network": "resnet",
-    "train_args": {"batch_size": 128, "epochs": 10, "lr": 1e-3},
+    "train_args": {"batch_size": 128, "epochs": 10, "lr": 1e-3, "loss": "crossentropy", "optimizer": "adam"},
 }
 
 

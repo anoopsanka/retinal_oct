@@ -7,7 +7,10 @@
             "network": "resnet", 
             "train_args": {
                 "batch_size": 32, 
-                "epochs": 10
+                "epochs": 10,
+                "lr": 1e-3,
+                "loss": "crossentropy", 
+                "optimizer": "adam"
             }
         },
         {
@@ -17,7 +20,9 @@
             "train_args": {
                 "batch_size": 32, 
                 "epochs": 10, 
-                "lr": 1e-4
+                "lr": 1e-4,
+                "loss": "crossentropy", 
+                "optimizer": "adam"
             }
         }
     ]

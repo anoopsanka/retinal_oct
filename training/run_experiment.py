@@ -9,7 +9,7 @@ from training.gpu_manager import GPUManager
 import pdb
 import wandb
 
-DEFAULT_TRAIN_ARGS = {"batch_size": 32, "epochs": 10, "lr": 1e-3}
+DEFAULT_TRAIN_ARGS = {"batch_size": 32, "epochs": 10, "lr": 1e-3, "loss": "crossentropy", "optimizer": "adam"}
 
 def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, use_wandb: bool = True):
     """
@@ -23,7 +23,9 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
             "train_args": {
                 "batch_size": 128
                 "epochs": 10,
-                "lr": 1e-3
+                "lr": 1e-3,
+                "loss": "crossentropy",
+                "optimizer": "adam",
             }
         }
     save_weights (bool)
@@ -70,6 +72,8 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
         epochs=experiment_config["train_args"]["epochs"],
         batch_size=experiment_config["train_args"]["batch_size"],
         lr = experiment_config["train_args"]["lr"],
+        loss = experiment_config["train_args"]["loss"],
+        optimizer = experiment_config["train_args"]["optimizer"],
         use_wandb=use_wandb
     )
 
@@ -77,7 +81,8 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
     print(f"Test evaluation: {score}")
 
     if use_wandb:
-        wandb.log({"test_metric": score})
+        wandb.log({"test_loss": round(score[0], 3)})
+        wandb.log({"test_accuracy": round(score[1], 3)})
     
     if save_weights:
         model.save_weights()

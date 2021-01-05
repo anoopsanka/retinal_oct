@@ -4,12 +4,12 @@ from typing import Callable, Dict
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.models import Model as KerasModel
-from tensorflow.keras.optimizers import RMSprop, Adam
 import tensorflow_datasets as tfds
+from core.models.model_util import get_optimizer, get_loss
 
 WEIGHTS_DIRNAME = Path(__file__).parents[1].resolve() / "weights"
 _SEED=42
-
+DEFAULT_CLASS_WEIGHTS = {0: 1.0, 1: 1.0, 2: 1.0, 3: 1.0}
 class Model:
 
     def __init__(
@@ -36,11 +36,14 @@ class Model:
     def image_shape(self):
         return self.data.input_shape
 
-    def fit(self, dataset, batch_size: int = 32, epochs: int = 10, lr: float = 1e-3, verbose: int = 1, callbacks: list = []):
+    def fit(self, dataset, batch_size: int = 32, epochs: int = 10, lr: float = 1e-3, optimizer: str = 'crossentropy', loss: str = 'adam', verbose: int = 1, callbacks: list = []):
         dataset.train, dataset.validation , dataset.test = dataset.prepare()
-        self.network.compile(loss=self.loss(), optimizer=self.optimizer(lr=lr), metrics=self.metrics())
+        self.network.compile(loss=get_loss(loss), optimizer=get_optimizer(optimizer, lr=lr), metrics=self.metrics())
 
-        class_weight = dataset.get_class_weights()
+        if optimizer == 'crossentropy':
+            class_weight = dataset.get_class_weights()
+        else:
+            class_weight =DEFAULT_CLASS_WEIGHTS
 
         fit_kwargs = dict(
                         epochs = epochs,
@@ -53,12 +56,6 @@ class Model:
 
     def evaluate(self, data, batch_size: int = 32, verbose=1):
         return self.network.evaluate(data.batch(batch_size), verbose=verbose)
-
-    def loss(self):
-        return 'sparse_categorical_crossentropy'
-
-    def optimizer(self, lr=1e-3):
-        return Adam(lr=lr)
 
     def metrics(self):
         return ['accuracy']
