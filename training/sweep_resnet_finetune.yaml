@@ -16,3 +16,9 @@ parameters:
     values: [5, 64]
   train_args.lr:
     values: [5e-05, 0.002]
+  train_args.optimizer:
+    distribution: categorical
+    values: [adam, momentum, rmsprop]
+  train_args.loss:
+    distribution: categorical
+    values: [crossentropy, focalloss]

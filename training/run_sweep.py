@@ -60,7 +60,7 @@ def args_to_json(default_config: dict, preserve_args: tuple = ("gpu", "save")) -
 def main():
     config, args = args_to_json(DEFAULT_CONFIG)
     env = {k: v for k, v in os.environ.items() if k not in ("WANDB_PROGRAM", "WANDB_ARGS")}
-    print ('args', args)
+    print ('args', *args)
 
     # pylint: disable=subprocess-popen-preexec-fn
     run = subprocess.Popen(
