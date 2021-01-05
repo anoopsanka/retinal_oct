@@ -13,3 +13,4 @@ tensorflow-datasets
 scikit-learn
 tensorflow-addons
 focal-loss
+tf-explain
