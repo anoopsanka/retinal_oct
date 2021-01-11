@@ -50,12 +50,12 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
 
     # Initialize metrics.
     all_metrics = []  # For summaries.
-    self.contrast_loss_metric = tf.keras.metrics.Mean('train/contrast_loss')
-    self.contrast_acc_metric = tf.keras.metrics.Mean('train/contrast_acc')
-    self.contrast_entropy_metric = tf.keras.metrics.Mean('train/contrast_entropy')
+    self.contrast_loss_metric = tf.keras.metrics.Mean('contrast_loss')
+    self.contrast_acc_metric = tf.keras.metrics.Mean('contrast_acc')
+    self.contrast_entropy_metric = tf.keras.metrics.Mean('contrast_entropy')
 
-    self.supervised_loss_metric = tf.keras.metrics.Mean('train/supervised_loss')
-    self.supervised_acc_metric = tf.keras.metrics.Mean('train/supervised_acc')
+    self.supervised_loss_metric = tf.keras.metrics.Mean('supervised_loss')
+    self.supervised_acc_metric = tf.keras.metrics.Mean('supervised_acc')
 
     all_metrics.extend([
         self.contrast_loss_metric, self.contrast_acc_metric, self.contrast_entropy_metric,
@@ -149,6 +149,55 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
       
       return {m.name: m.result() for m in self.metrics}
 
+
+  def test_step(self, data):
+    X, y = data
+
+    projection_head_outputs, supervised_head_outputs = self(X, training=True)
+    loss = None
+
+    # Evaluate Contrastive Loss
+    outputs = projection_head_outputs
+    con_loss, logits_con, labels_con = add_contrastive_loss(
+        outputs,
+        hidden_norm=self.hidden_norm,
+        temperature=self.temperature
+    )
+
+    # Evaluate the Classification Loss
+    outputs = supervised_head_outputs
+    l = tf.concat([y, y], 0)
+    sup_loss = add_supervised_loss(labels=l, logits=outputs)
+
+    loss = tf.reduce_mean(con_loss + sup_loss)
+
+    #TODO: add metrics updates here!
+    # weight_decay = model_lib.add_weight_decay( 
+    #     model, adjust_per_optimizer=True)
+    # weight_decay_metric.update_state(weight_decay)
+    # loss += weight_decay
+
+    #total_loss_metric.update_state(loss)
+    # update the metrics
+    update_pretrain_metrics_train(self.contrast_loss_metric,
+                                  self.contrast_acc_metric,
+                                  self.contrast_entropy_metric,
+                                  con_loss, logits_con,
+                                  labels_con)
+    update_finetune_metrics_train(self.supervised_loss_metric,
+                                  self.supervised_acc_metric, sup_loss, 
+                                  l, outputs)
+    
+    return {m.name: m.result() for m in self.metrics}
+
+    @property
+    def metrics(self):
+        # We list our `Metric` objects here so that `reset_states()` can be
+        # called automatically at the start of each epoch
+        # or at the start of `evaluate()`.
+        # If you don't implement this property, you have to call
+        # `reset_states()` yourself at the time of your choosing.
+        return self.all_metrics
 
 def update_pretrain_metrics_train(contrast_loss, contrast_acc, contrast_entropy,
                                   loss, logits_con, labels_con):
