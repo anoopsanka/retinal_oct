@@ -2,6 +2,8 @@
 import tensorflow as tf
 from resnet import resnet
 from projection_head import SupervisedHead, ProjectionHead
+from losses import add_contrastive_loss, add_supervised_loss
+from data_augmentation import batch_random_blur
 
 """Wrapper for Resnet, Projection/ Supervised head to keras.Model
 """
@@ -30,6 +32,8 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
     super(Pretrained_SimCLR_Model, self).__init__(**kwargs)
 
     self.use_blur = use_blur
+    self.hidden_norm = hidden_norm
+    self.temperature = temperature
 
     # Defining the Base Resnet Model
     self.base_model = resnet(resnet_depth, 
@@ -68,15 +72,18 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
       num_transforms = 2
     else:
       num_transforms = 1
+    
+    _, image_size, _, _ = features.shape
 
     # Split channels, and optionally apply extra batched augmentation.
     features_list = tf.split(
         features, num_or_size_splits=num_transforms, axis=-1)
     
-    # if self.use_blur and training:
-    #   features_list = data_util.batch_random_blur(features_list,
-    #                                               image_size,
-    #                                               image_size)
+    if self.use_blur and training:
+      features_list = batch_random_blur(features_list,
+                                        image_size,
+                                        image_size)
+
     features = tf.concat(features_list, 0)  # (num_transforms * bsz, h, w, c)
 
     # run it through the base_model
@@ -84,7 +91,6 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
       features = layer(features, training=training)
 
     for layer in self.base_model.block_groups:
-      layer.trainable = False
       features = layer(features, training=training)
     
     # final average pool layer in Resnet
@@ -109,8 +115,8 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
       outputs = projection_head_outputs
       con_loss, logits_con, labels_con = add_contrastive_loss(
           outputs,
-          hidden_norm=hidden_norm,
-          temperature=temperature
+          hidden_norm=self.hidden_norm,
+          temperature=self.temperature
       )
 
       # Evaluate the Classification Loss
