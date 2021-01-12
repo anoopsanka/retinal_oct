@@ -20,3 +20,4 @@ safety
 scipy
 pillow
 wandb
+seaborn
