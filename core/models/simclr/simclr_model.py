@@ -124,7 +124,9 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
       l = tf.concat([y, y], 0)
       sup_loss = add_supervised_loss(labels=l, logits=outputs)
 
-      loss = tf.reduce_mean(con_loss + sup_loss)
+      con_loss = tf.reduce_mean(con_loss)
+      sup_loss = tf.reduce_mean(sup_loss)
+      loss = con_loss + sup_loss
 
       #TODO: add metrics updates here!
       # weight_decay = model_lib.add_weight_decay( 
@@ -169,8 +171,9 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
     l = tf.concat([y, y], 0)
     sup_loss = add_supervised_loss(labels=l, logits=outputs)
 
-    loss = tf.reduce_mean(con_loss + sup_loss)
-
+    con_loss = tf.reduce_mean(con_loss)
+    sup_loss = tf.reduce_mean(sup_loss)
+    loss = tf.reduce_mean(loss)
     #TODO: add metrics updates here!
     # weight_decay = model_lib.add_weight_decay( 
     #     model, adjust_per_optimizer=True)
