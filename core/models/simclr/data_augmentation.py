@@ -484,3 +484,31 @@ def preprocess_image(image, height, width, is_training=False,
     return preprocess_for_train(image, height, width, color_distort)
   else:
     return preprocess_for_eval(image, height, width, test_crop)
+
+def train_classification_aug(img, lb, 
+                             img_size=128, 
+                             brightness_delta= 0.8,
+                             contrast_delta  = 0.5,
+                             saturation_delta= 0.5,
+                             hue_delta       = 0.2,
+                             max_rot_angle   = 45.):
+  img = tf.cast(img, dtype=tf.float32)/255.
+  IMG_SIZE = img_size
+
+  angle_rad = max_rot_angle / 180. * np.pi
+
+  padding = IMG_SIZE // 4
+  precrop_shape = IMG_SIZE + padding
+
+  img = tf.image.resize(img, (precrop_shape, precrop_shape))
+  img = tf.image.random_crop(img, (IMG_SIZE, IMG_SIZE, 3))
+  img = tf.image.random_brightness(img, brightness_delta)
+  img = tf.image.random_contrast  (img, 1-contrast_delta,  1+contrast_delta)
+  img = tf.image.random_saturation(img, 1-saturation_delta,1+saturation_delta)
+  img = tf.image.random_hue       (img, hue_delta)
+
+  img = tf.image.random_flip_left_right(img)
+  img = tfa.image.rotate(img, (tf.random.uniform(shape=(1,)) - 0.5)*2 *angle_rad )
+
+  img = tf.clip_by_value(img, 0., 1.0)
+  return img, lb #tf.one_hot(lb, 4, )
