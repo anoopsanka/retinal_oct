@@ -17,6 +17,7 @@ from data_augmentation import preprocess_image
 import simclr_model
 import wandb
 from wandb.keras import WandbCallback
+from lr_schedule import WarmUpAndCosineDecay
 
 def train_data_aug(img, lb):
   xs = []
@@ -48,16 +49,20 @@ np.random.seed(hash("improves reproducibility") % 2**32 - 1)
 tf.random.set_seed(hash("by removing stochasticity") % 2**32 - 1)
 
 run = wandb.init(project='OCT-keras-SimCLR',
-                 config={  # and include hyperparameters and metadata
-                     "learning_rate": 1e-3,
-                     "epochs": 30,
-                     "batch_size": 128,
+                 config={
+                     # and include hyperparameters and metadata
+                     "learning_rate": 0.01,
+                     "epochs": 200,
+                     "learning_rate_scaling": 'linear',
+                     "num_examples": len(ds_train),
+                     "warmup_epochs": 10,
+                     "batch_size": 256,
                      "num_classes": 4,
                      "use_blur": True,
                      # ProjectionLayer Parameters
                      "proj_head_mode": 'nonlinear',
                      "proj_out_dim" : 128,
-                     "num_proj_layers": 3,
+                     "num_proj_layers": 3, 
                      "ft_proj_selector": 0,
                      # Resnet_parameter
                      "resnet_depth": 18,
@@ -95,8 +100,17 @@ model.base_model.build(input_shape_base)
 model.build(input_shape_simclr)
 model.summary()
 
-# Define Optimizer
-optimizer = tfa.optimizers.LAMB(config.learning_rate)
+# Define Scheduler and Optimizer
+lr_scheduler = WarmUpAndCosineDecay(config.learning_rate, 
+                                    num_examples= config.num_examples, 
+                                    train_epochs= config.epochs, 
+                                    train_batch_size = config.batch_size,
+                                    learning_rate_scaling = config.learning_rate_scaling, 
+                                    warmup_epochs = config.warmup_epochs)
+optimizer = tfa.optimizers.LAMB(lr_scheduler,
+                                weight_decay_rate=1e-6,
+                                exclude_from_weight_decay=['batch_normalization', 'bias', 'head_supervised'])
+
 model.compile(optimizer= optimizer)
 
 model.fit(ds_train.map(train_data_aug).batch(config.batch_size ),
