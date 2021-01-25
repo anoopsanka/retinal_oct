@@ -8,12 +8,8 @@ git pull origin main
 
 ## 2. Set up the Python environment
 
-### Cloud machine
 
-
-### Local Machine
-
-Run `conda env create -f environment.yml' to create an environment called `retina_env`.
+Run `conda env create -f environment.yml` to create an environment called `retina_env`.
 
 Also, run ```export PYTHONPATH=.``` before executing any commands later on, or you will get errors like `ModuleNotFoundError: No module named ...`.
 
