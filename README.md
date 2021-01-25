@@ -19,7 +19,7 @@ Layout, tooling/code is based from https://github.com/full-stack-deep-learning/f
 You can run the shortcut command `tasks/train_retina_predictor.sh`, which runs the following:
 
 ```sh
-python training/run_experiment.py --save '{"dataset": "RetinaDataset", "model": "RetinaModel", "network": "resnet", "train_args": {"batch_size": 32}}'
+python training/run_experiment.py --save '{"dataset": "RetinaDataset", "model": "RetinaModel", "network": "resnetconv", "train_args": {"batch_size": 32}}'
 ```
 
 ## Running sweeps (hyper param optimization using weights & biases).

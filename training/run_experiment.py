@@ -19,7 +19,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
         {
             "dataset": RetinaDataset,
             "model": "RetinaModel",
-            "network": "resnet",
+            "network": "resnetconv",
             "train_args": {
                 "batch_size": 128
                 "epochs": 10,
@@ -101,7 +101,7 @@ def _parse_args():
     parser.add_argument(
         "experiment_config",
         type=str,
-        help='Experiment JSON (\'{"dataset": "RetinaDataset", "model": "RetinaModel", "network": "resnet"}\'',
+        help='Experiment JSON (\'{"dataset": "RetinaDataset", "model": "RetinaModel", "network": "resnetconv"}\'',
     )
     parser.add_argument(
         "--nowandb", default=False, action="store_true", help="if true, do not use wandb"
