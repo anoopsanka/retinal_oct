@@ -485,6 +485,10 @@ def preprocess_image(image, height, width, is_training=False,
   else:
     return preprocess_for_eval(image, height, width, test_crop)
 
+
+import numpy as np
+import tensorflow_addons as tfa
+
 def train_classification_aug(img, lb, 
                              img_size=128, 
                              brightness_delta= 0.8,
