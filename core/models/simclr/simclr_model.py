@@ -153,9 +153,16 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
 
 
   def test_step(self, data):
-    X, y = data
+    """called during validation step/ model.evaluate
+    """
 
-    projection_head_outputs, supervised_head_outputs = self(X, training=True)
+    X, y = data
+    assert X.shape[-1] == 6, f'expecting image channel dimension of 6, instead X.shape[-1] == {X.shape[-1]}'
+
+    features_list = tf.split(X, num_or_size_splits=2, axis=-1)
+    features = tf.concat(features_list, 0)
+
+    projection_head_outputs, supervised_head_outputs = self(features, training=False)
     loss = None
 
     # Evaluate Contrastive Loss
@@ -173,6 +180,7 @@ class Pretrained_SimCLR_Model(tf.keras.Model):
 
     con_loss = tf.reduce_mean(con_loss)
     sup_loss = tf.reduce_mean(sup_loss)
+    loss = con_loss + sup_loss
     loss = tf.reduce_mean(loss)
     #TODO: add metrics updates here!
     # weight_decay = model_lib.add_weight_decay( 
