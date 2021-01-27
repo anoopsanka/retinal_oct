@@ -66,7 +66,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
     def train_data_aug(img, lb):
         xs = []
         for _ in range(2):
-            xs.append(train_classification_aug(img, lb, img_size=experiment_config["train_args"]["epochs"]['IMG_SIZE'])[0])
+            xs.append(train_classification_aug(img, lb, img_size=experiment_config["train_args"]['IMG_SIZE'])[0])
         img = tf.concat(xs, -1)
         return img, tf.one_hot(lb, 4)
 
