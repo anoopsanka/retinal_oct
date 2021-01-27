@@ -13,6 +13,8 @@ from core.models.model_utils.lr_schedule import WarmUpAndCosineDecay
 from core.datasets.data_augmentation import train_classification_aug
 import tensorflow_addons as tfa
 import tensorflow_datasets as tfds
+import wandb
+from wandb.keras import WandbCallback
 
 DEFAULT_TRAIN_ARGS = {"batch_size": 32, "epochs": 10, "lr": 1e-3, "loss": "crossentropy", "optimizer": "adam"}
 
@@ -120,7 +122,9 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
     model.compile(optimizer=optimizer)
 
     model.fit(ds_train.map(train_data_aug).batch(experiment_config["train_args"]['batch_size']),
-              epochs=experiment_config["train_args"]['epochs'])
+              epochs=experiment_config["train_args"]['epochs'],
+              validation_data=ds_test.map(val_data_aug).batch(experiment_config["train_args"]['batch_size']),
+              callbacks = [WandbCallback()])
 
     score = model.evaluate(ds_test.map(train_data_aug).batch(experiment_config["train_args"]['batch_size']))
     print(f"Test evaluation: {score}")

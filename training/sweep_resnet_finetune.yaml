@@ -9,7 +9,7 @@ parameters:
   model:
     value: RetinaModel
   network:
-    value: resnetfinetune
+    value: resnetconvfinetune
   train_args.batch_size:
     values: [16, 128]
   train_args.epochs:
