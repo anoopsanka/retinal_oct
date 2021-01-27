@@ -13,28 +13,13 @@ if find_spec("core") is None:
 
 from core.datasets import RetinaDataset
 
-from data_augmentation import preprocess_image
+from data_augmentation import preprocess_image, train_classification_aug
 import simclr_model
 import wandb
 from wandb.keras import WandbCallback
 from lr_schedule import WarmUpAndCosineDecay
 
-def train_data_aug(img, lb):
-  xs = []
-  for _ in range(2):
-    xs.append( preprocess_image(img, config.IMG_SIZE, config.IMG_SIZE,
-                                is_training=True,
-                                color_distort=True,
-                                test_crop=False) )
-  img = tf.concat(xs, -1)
-  return img, tf.one_hot(lb, config.num_classes)
 
-def val_data_aug(img, lb):
-  img = preprocess_image(img, config.IMG_SIZE, config.IMG_SIZE,
-                         is_training=True,
-                         color_distort=True,
-                         test_crop=False)
-  return img, lb
 
 
 # Load Retinal Data
@@ -113,7 +98,22 @@ optimizer = tfa.optimizers.LAMB(lr_scheduler,
 
 model.compile(optimizer= optimizer)
 
+
+def train_data_aug(img, lb):
+  xs = []
+  for _ in range(2):
+    xs.append(train_classification_aug(img, lb, img_size = config.IMG_SIZE)[0])
+  img = tf.concat(xs, -1)
+  return img, tf.one_hot(lb, config.num_classes)
+
+def val_data_aug(img, lb):
+  xs = []
+  for _ in range(2):
+    xs.append(train_classification_aug(img, lb, img_size = config.IMG_SIZE)[0])
+  img = tf.concat(xs, -1)
+  return img, tf.one_hot(lb, 4)
+
 model.fit(ds_train.map(train_data_aug).batch(config.batch_size ),
           epochs= config.epochs,
-          validation_data = ds_test.map(train_data_aug).batch(config.batch_size),
+          validation_data = ds_test.map(val_data_aug).batch(config.batch_size),
           callbacks = [WandbCallback()])
