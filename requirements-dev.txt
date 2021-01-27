@@ -63,6 +63,8 @@ dparse==0.5.1
     # via safety
 entrypoints==0.3
     # via nbconvert
+envyaml==1.6.201229
+    # via -r requirements-dev.in
 gevent==20.12.1
     # via grequests
 gitdb==4.0.5
@@ -290,11 +292,12 @@ pytz==2020.5
     # via
     #   babel
     #   pandas
-pyyaml==5.3.1
+pyyaml==5.4.1
     # via
     #   -r requirements-dev.in
     #   bandit
     #   dparse
+    #   envyaml
     #   wandb
 pyzmq==20.0.0
     # via
