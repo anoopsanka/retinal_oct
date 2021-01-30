@@ -1,0 +1,22 @@
+program: ./training/run_sweep_simclr.py
+method: bayes
+metric:
+  name: val_supervised_loss
+  goal: minimize
+parameters:
+  dataset:
+    value: RetinaDatasetWrapper
+  train_args.learning_rate:
+    values: [5e-05, 0.002]
+  train_args.epochs:
+    values: [10, 64]
+  train_args.learning_rate_scaling:
+    value: linear
+  train_args.warmup_epochs:
+    value: 10
+  train_args.batch_size:
+    values: [32, 512]
+  train_args.resnet_depth:
+    value: 18
+  train_args.temperature:
+    value: 1.0

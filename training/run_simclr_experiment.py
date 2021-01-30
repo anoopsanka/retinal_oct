@@ -17,7 +17,24 @@ import wandb
 from wandb.keras import WandbCallback
 
 
-DEFAULT_TRAIN_ARGS = {"batch_size": 32, "epochs": 10, "lr": 1e-3, "loss": "crossentropy", "optimizer": "adam"}
+DEFAULT_TRAIN_ARGS = {"learning_rate": 0.01,
+     "epochs": 1,
+     "learning_rate_scaling": "linear",
+     "warmup_epochs": 10,
+     "batch_size": 256,
+     "num_classes": 4,
+     "use_blur": True,
+     "proj_head_mode": "nonlinear",
+     "proj_out_dim" : 128,
+     "num_proj_layers": 3,
+     "ft_proj_selector": 0,
+     "resnet_depth": 18,
+     "resnet_width_multiplier": 1,
+     "resnet_se_ratio": 0.0,
+     "resnet_sk_ratio": 0.0,
+     "hidden_norm": True,
+     "temperature" :1.0,
+     "IMG_SIZE": 128}
 
 # Set the random seeds
 os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
