@@ -16,6 +16,7 @@ import tensorflow_datasets as tfds
 import wandb
 from wandb.keras import WandbCallback
 
+
 DEFAULT_TRAIN_ARGS = {"batch_size": 32, "epochs": 10, "lr": 1e-3, "loss": "crossentropy", "optimizer": "adam"}
 
 # Set the random seeds
@@ -126,21 +127,18 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
               validation_data=ds_test.map(val_data_aug).batch(experiment_config["train_args"]['batch_size']),
               callbacks = [WandbCallback()])
 
-    score = model.evaluate(ds_test.map(train_data_aug).batch(experiment_config["train_args"]['batch_size']))
-    print(f"Test evaluation: {score}")
-
-    score = model.evaluate(dataset.test, batch_size=experiment_config["train_args"]["batch_size"])
+    score = model.evaluate(ds_test.map(val_data_aug).batch(experiment_config["train_args"]['batch_size']))
     print(f"Test evaluation: {score}")
 
     if use_wandb:
-        wandb.log({"contrast_loss": round(score[0], 3)})
-        wandb.log({"contrast_acc": round(score[1], 3)})
-        wandb.log({"contrast_entropy": round(score[2], 3)})
-        wandb.log({"supervised_loss": round(score[3], 3)})
-        wandb.log({"supervised_acc": round(score[4], 3)})
+        #wandb.log({"test_contrast_loss": round(score[0], 3)})
+        #wandb.log({"contrast_acc": round(score[1], 3)})
+        #wandb.log({"contrast_entropy": round(score[2], 3)})
+        wandb.log({"test_loss": round(score[3], 3)})
+        wandb.log({"test_acc": round(score[4], 3)})
 
     if save_weights:
-        model.save_weights()
+        model.save_weights("simclr_pretrain_weights")
 
 
 def _parse_args():

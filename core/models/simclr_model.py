@@ -3,10 +3,11 @@ from core.networks.resnet_for_simclr import resnet
 from core.models.model_utils.projection_head import SupervisedHead, ProjectionHead
 from core.models.model_utils.losses import add_contrastive_loss, add_supervised_loss
 from core.datasets.data_augmentation import batch_random_blur
+from pathlib import Path
 
 """Wrapper for Resnet, Projection/ Supervised head to keras.Model
 """
-
+WEIGHTS_DIRNAME = Path(__file__).parents[1].resolve() / "weights"
 
 class Pretrained_SimCLR_Model(tf.keras.Model):
     """Assemble the resnet, heads, training into one module"""
@@ -223,3 +224,9 @@ def update_finetune_metrics_train(supervised_loss_metric, supervised_acc_metric,
     label_acc = tf.equal(tf.argmax(labels, 1), tf.argmax(logits, axis=1))
     label_acc = tf.reduce_mean(tf.cast(label_acc, tf.float32))
     supervised_acc_metric.update_state(label_acc)
+    
+
+def save_weights(self, name):
+    WEIGHTS_DIRNAME.mkdir(parents=True, exist_ok=True)
+    file_name = str(WEIGHTS_DIRNAME / f"{name}_weights.h5")
+    self.network.save_weights(file_name)
