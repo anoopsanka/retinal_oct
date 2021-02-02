@@ -18,6 +18,7 @@
 import json
 import math
 import os
+import shutil
 
 from absl import app
 from absl import flags
@@ -465,8 +466,13 @@ def _restore_latest_or_from_pretrain(checkpoint_manager):
 def main(argv):
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
+  
+  if FLAGS.train_mode == 'pretrain':
+    if os.path.isdir(FLAGS.model_dir):
+      shutil.rmtree(FLAGS.model_dir)
 
   wandb.init(sync_tensorboard=True)
+  wandb.config.update(flags.FLAGS)
 
   builder = tfds.builder(FLAGS.dataset, data_dir=FLAGS.data_dir)
   builder.download_and_prepare()

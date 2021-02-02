@@ -1,21 +1,7 @@
 #!/bin/bash
-python training/run_simclr_experiment.py --save '{"dataset": "RetinaDatasetWrapper", "train_args": {
-     "learning_rate": 0.01,
-     "epochs": 10,
-     "learning_rate_scaling": "linear",
-     "warmup_epochs": 10,
-     "batch_size": 256,
-     "num_classes": 4,
-     "use_blur": true,
-     "proj_head_mode": "nonlinear",
-     "proj_out_dim" : 128,
-     "num_proj_layers": 3,
-     "ft_proj_selector": 0,
-     "resnet_depth": 18,
-     "resnet_width_multiplier": 1,
-     "resnet_se_ratio": 0.0,
-     "resnet_sk_ratio": 0.0,
-     "hidden_norm": true,
-     "temperature" :1.0,
-     "IMG_SIZE": 128
-    }}'
+python training/run_simclr.py --train_mode=pretrain \
+  --train_batch_size=128 --train_epochs=1 \
+  --learning_rate=0.01 --weight_decay=1e-4 --temperature=0.5 \
+ --image_size=128 --eval_split=test --resnet_depth=18 \
+  --use_blur=False --color_jitter_strength=0.5 \
+  --model_dir=./tmp

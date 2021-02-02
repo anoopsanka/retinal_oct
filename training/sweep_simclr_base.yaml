@@ -1,22 +1,36 @@
-program: ./training/run_sweep_simclr.py
+program: ./training/run_simclr.py
 method: bayes
 metric:
-  name: val_supervised_loss
+  name: train/contrast_loss
   goal: minimize
 parameters:
-  dataset:
-    value: RetinaDatasetWrapper
-  train_args.learning_rate:
-    values: [5e-05, 0.002]
-  train_args.epochs:
-    values: [10, 64]
-  train_args.learning_rate_scaling:
-    value: linear
-  train_args.warmup_epochs:
-    value: 10
-  train_args.batch_size:
-    values: [32, 512]
-  train_args.resnet_depth:
-    value: 18
-  train_args.temperature:
-    value: 1.0
+  train_mode:
+    value: pretrain
+  train_batch_size:
+    distribution: int_uniform
+    min: 128
+    max: 1024
+  train_epochs:
+    distribution: int_uniform
+    min: 100
+    max: 1000
+  learning_rate:
+    values: [0.01, 0.02, 0.03]
+  weight_decay:
+    values: [1e-5, 1e-6, 1e-7]
+  temperature:
+    values: [0.5, 0.75, 1]
+  image_size:
+    values: [128, 224]
+  resnet_depth:
+    values: [34, 50, 101, 152, 200]
+  color_jitter_strength:
+    values: [0.5, 0.75, 1]
+  use_blur:
+    values:
+    - false
+    - true
+  eval_split:
+    value: test
+  model_dir:
+    value: ./tmp
