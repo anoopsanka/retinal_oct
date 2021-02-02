@@ -14,3 +14,4 @@ wandb/*
 #MISC
 .*DS_Store
 logs
+tmp
