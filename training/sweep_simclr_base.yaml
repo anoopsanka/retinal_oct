@@ -7,9 +7,7 @@ parameters:
   train_mode:
     value: pretrain
   train_batch_size:
-    distribution: int_uniform
-    min: 128
-    max: 1024
+    values: [128, 512, 1024, 2048, 4096]
   train_epochs:
     distribution: int_uniform
     min: 100
