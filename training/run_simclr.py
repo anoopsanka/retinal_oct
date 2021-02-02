@@ -30,6 +30,7 @@ from core.datasets import RetinaDataset
 import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
 
+import wandb
 
 
 FLAGS = flags.FLAGS
@@ -465,6 +466,7 @@ def main(argv):
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
 
+  wandb.init(sync_tensorboard=True)
 
   builder = tfds.builder(FLAGS.dataset, data_dir=FLAGS.data_dir)
   builder.download_and_prepare()
