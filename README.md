@@ -40,6 +40,6 @@ wandb agent {sweepid}
 
 
 ## Acknowledgements
-- [Semi-Supervised Learning (SimClr)](https://github.com/google-research/simclr)
+- [Self-Supervised Learning (SimClr)](https://github.com/google-research/simclr)
 - [Full Stack Deeplearning](https://github.com/full-stack-deep-learning) 
 - [Weights and Biases](https://wandb.ai/)
