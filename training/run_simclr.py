@@ -32,7 +32,7 @@ import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
 
 import wandb
-
+import pdb
 
 FLAGS = flags.FLAGS
 
@@ -240,6 +240,10 @@ flags.DEFINE_boolean(
     'use_blur', True,
     'Whether or not to use Gaussian blur for augmentation during pretraining.')
 
+flags.DEFINE_bool(
+    'export_model', True,
+    'Export the model')
+
 
 def get_salient_tensors_dict():
   """Returns a dictionary of tensors."""
@@ -277,9 +281,10 @@ def build_saved_model(model):
       return get_salient_tensors_dict()
 
   module = SimCLRModel(model)
-  input_spec = tf.TensorSpec(shape=[None, None, None, 3], dtype=tf.float32)
-  module.__call__.get_concrete_function(input_spec, trainable=True)
-  module.__call__.get_concrete_function(input_spec, trainable=False)
+  input_spec1 = tf.TensorSpec(shape=[None, 224, 224, 6], dtype=tf.float32)
+  input_spec2 = tf.TensorSpec(shape=[None, 224, 224, 3], dtype=tf.float32)
+  module.__call__.get_concrete_function(input_spec1, trainable=True)
+  module.__call__.get_concrete_function(input_spec2, trainable=False)
   return module
 
 
@@ -462,6 +467,9 @@ def _restore_latest_or_from_pretrain(checkpoint_manager):
       for x in output_layer_parameters:
         x.assign(tf.zeros_like(x))
 
+def export(model, global_step):
+    g_step = global_step.numpy()
+    save(model, g_step)
 
 def main(argv):
   if len(argv) > 1:
@@ -664,6 +672,8 @@ def main(argv):
           metric.reset_states()
       logging.info('Training complete...')
 
+    if FLAGS.export_model:
+      export(model, global_step)
     if FLAGS.mode == 'train_then_eval':
       perform_evaluation(model, builder, eval_steps,
                          checkpoint_manager.latest_checkpoint, strategy,
