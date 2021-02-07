@@ -1,0 +1,34 @@
+program: ./training/run_simclr.py
+method: bayes
+metric:
+  name: train/contrast_loss
+  goal: minimize
+parameters:
+  train_mode:
+    value: pretrain
+  train_batch_size:
+    values: [128, 256, 512]
+  train_epochs:
+    distribution: int_uniform
+    min: 100
+    max: 1000
+  learning_rate:
+    values: [0.01, 0.02, 0.03]
+  weight_decay:
+    values: [1e-5, 1e-6, 1e-7]
+  temperature:
+    values: [0.5, 0.75, 1]
+  image_size:
+    values: [128, 224]
+  resnet_depth:
+    values: [34, 50, 101, 152, 200]
+  color_jitter_strength:
+    values: [0.5, 0.75, 1]
+  use_blur:
+    values:
+    - false
+    - true
+  eval_split:
+    value: test
+  model_dir:
+    value: ./tmp

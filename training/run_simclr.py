@@ -470,6 +470,8 @@ def _restore_latest_or_from_pretrain(checkpoint_manager):
 def export(model, global_step):
     g_step = global_step.numpy()
     save(model, g_step)
+    wandb.save(FLAGS.model_dir+'/saved_model/*/*.pb')
+    wandb.save(FLAGS.model_dir+'/saved_model/*/variables/*')
 
 def main(argv):
   if len(argv) > 1:
@@ -678,6 +680,8 @@ def main(argv):
       perform_evaluation(model, builder, eval_steps,
                          checkpoint_manager.latest_checkpoint, strategy,
                          topology)
+
+    wandb.save(FLAGS.model_dir)
 
 
 if __name__ == '__main__':
