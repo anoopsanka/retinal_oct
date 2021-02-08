@@ -281,8 +281,8 @@ def build_saved_model(model):
       return get_salient_tensors_dict()
 
   module = SimCLRModel(model)
-  input_spec1 = tf.TensorSpec(shape=[None, 224, 224, 6], dtype=tf.float32)
-  input_spec2 = tf.TensorSpec(shape=[None, 224, 224, 3], dtype=tf.float32)
+  input_spec1 = tf.TensorSpec(shape=[None, FLAGS.image_size, FLAGS.image_size, 6], dtype=tf.float32)
+  input_spec2 = tf.TensorSpec(shape=[None, FLAGS.image_size, FLAGS.image_size, 3], dtype=tf.float32)
   module.__call__.get_concrete_function(input_spec1, trainable=True)
   module.__call__.get_concrete_function(input_spec2, trainable=False)
   return module
