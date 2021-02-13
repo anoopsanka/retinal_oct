@@ -15,3 +15,6 @@ wandb/*
 .*DS_Store
 logs
 tmp
+notebooks/sub_sampled
+notebooks/uncertain
+notebooks/embeddings
