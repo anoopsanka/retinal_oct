@@ -30,12 +30,20 @@ wandb sweep training/sweep_resnet_finetune.yaml
 copy the sweepid from above
 wandb agent {sweepid}
 ```
-## Findings
+## Findings  
+
+### Supervised Learning
 
 | Network         | Train Acc                                                    | Val Acc                                                      | Test Acc                                                     | Hyperparam Optimization                                      |
 | --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Resnet          | [84.6%](https://wandb.ai/retina-project/classification/runs/xzp9kw6n?workspace=user-) | [88.5%](https://wandb.ai/retina-project/classification/runs/xzp9kw6n?workspace=user-) | [93.2%](https://wandb.ai/retina-project/classification/runs/xzp9kw6n?workspace=user-) | [Sweep Config](https://wandb.ai/retina-project/classification/sweeps/yj2pebg1?workspace=user-) |
 | Resnet FineTune | [87.39%](https://wandb.ai/retina-project/classification/runs/irlss6yz?workspace=user-) | [91.26%](https://wandb.ai/retina-project/classification/runs/irlss6yz?workspace=user-) | [97.8%](https://wandb.ai/retina-project/classification/runs/irlss6yz?workspace=user-) | [Sweep Config](https://wandb.ai/retina-project/classification/sweeps/r8g3eh4q?workspace=user-) |
+
+  
+### Self-Supervised Learning
+| Network | Contrastive Accuracy                                         | Supervised Accuracy                                          | Hyperparam Optimization                                 |
+| ------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------- |
+| SIM CLR | [97.4%](https://wandb.ai/hisunnytang/OCT-keras-SimCLR/runs/1ipksk06?workspace=user-hisunnytang) | [89.46%](https://wandb.ai/hisunnytang/OCT-keras-SimCLR/runs/1ipksk06?workspace=user-hisunnytang) | [Sweeps](https://wandb.ai/hisunnytang/OCT-keras-SimCLR) |
 
 
 
