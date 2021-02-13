@@ -14,3 +14,4 @@ scikit-learn
 tensorflow-addons
 focal-loss
 tf-explain
+umap-learn
