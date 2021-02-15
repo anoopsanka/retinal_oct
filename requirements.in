@@ -15,3 +15,6 @@ tensorflow-addons
 focal-loss
 tf-explain
 umap-learn
+seaborn
+matplotlib
+plotly
